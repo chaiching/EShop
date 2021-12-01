@@ -113,9 +113,9 @@
         if ($_POST) {
             try {
                 // posted values
-                $current_password = htmlspecialchars(strip_tags($_POST['current_password']));
-                $new_password = htmlspecialchars(strip_tags($_POST['new_password']));
-                $confirm_password = htmlspecialchars(strip_tags($_POST['confirm_password']));
+                $current_password = ($_POST['current_password']);
+                $new_password = ($_POST['new_password']);
+                $confirm_password = ($_POST['confirm_password']);
                 $email = htmlspecialchars(strip_tags($_POST['email']));
                 $first_name = htmlspecialchars(strip_tags($_POST['first_name']));
                 $last_name = htmlspecialchars(strip_tags($_POST['last_name']));
