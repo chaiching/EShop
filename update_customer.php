@@ -4,10 +4,7 @@
 <head>
     <title>PDO - Read Records - PHP CRUD Tutorial</title>
     <!-- Latest compiled and minified Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <!-- custom css -->
     <style>
         .m-r-1em {
@@ -144,16 +141,19 @@
                     $flag = 0;
                     $message =  $message . "Must above or 18 years old. ";
                 }
+
                 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                     $flag = 0;
                     $message =  $message . "Invalid email format. ";
                 }
 
-                $query = "SELECT email FROM customers WHERE email = ?";
+                $query = "SELECT email FROM customers WHERE email <> ? AND email = ?";
                 $stmt = $con->prepare($query);
+                $stmt->bindParam(1, $c_username);
                 $stmt->bindParam(1, $email);
                 $stmt->execute();
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                
 
                 if (is_array($row)) {
                         $flag = 0;
@@ -328,6 +328,7 @@
 
     </div>
     <!-- end .container -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </body>
 
 </html>

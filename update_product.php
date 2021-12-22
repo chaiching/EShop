@@ -4,10 +4,7 @@
 <head>
     <title>PDO - Read Records - PHP CRUD Tutorial</title>
     <!-- Latest compiled and minified Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <!-- custom css -->
     <style>
         .m-r-1em {
@@ -46,7 +43,7 @@
         // read current record's data
         try {
             // prepare select query
-            $query = "SELECT id, name, description, price, promotion_price, manufacture_date, expired_date FROM products WHERE id = ? LIMIT 0,1";
+            $query = "SELECT id, name, description, category_id, price, promotion_price, manufacture_date, expired_date FROM products WHERE id = ? LIMIT 0,1";
             $stmt = $con->prepare($query);
 
             // this is the first question mark
@@ -61,6 +58,7 @@
             // values to fill up our form
             $name = $row['name'];
             $description = $row['description'];
+            $category_id = $row['category_id'];
             $price = $row['price'];
             $promotionprice = $row['promotion_price'];
             $manufacturedate = $row['manufacture_date'];
@@ -82,6 +80,7 @@
             echo "<td>{$id}</td>";
             echo "<td>{$name}</td>";
             echo "<td>{$description}</td>";
+            echo "<td>{$category_id}</td>";
             echo "<td>{$price}</td>";
             echo "<td>{$promotionprice}</td>";
             echo "<td>{$manufacturedate}</td>";
@@ -111,6 +110,7 @@
                 // posted values
                 $name = htmlspecialchars(strip_tags($_POST['name']));
                 $description = htmlspecialchars(strip_tags($_POST['description']));
+                $category_id = htmlspecialchars(strip_tags($_POST['category_id']));
                 $price = htmlspecialchars(strip_tags($_POST['price']));
                 $promotionprice = htmlspecialchars(strip_tags($_POST['promotion_price']));
                 $manufacturedate = date(strip_tags($_POST['manufacture_date']));
@@ -120,7 +120,7 @@
                 $message = "";
                 $nowdate = date("Y-m-d");
 
-                if ($name == "" || $description == "" || $price == "" || $promotionprice == "" || $manufacturedate == "" || $expireddate == "") {
+                if ($name == "" || $description == "" || $category_id == "" || $price == "" || $promotionprice == "" || $manufacturedate == "" || $expireddate == "") {
                     $flag = 0;
                     $message = "Please fill in the blank. ";
                 }
@@ -152,13 +152,14 @@
                 if ($flag == 1) {
 
                     $query = "UPDATE products
-                    SET name=:name, description=:description, price=:price, promotion_price=:promotion_price, manufacture_date=:manufacture_date, expired_date=:expired_date WHERE id = :id";
+                    SET name=:name, description=:description, category_id=:category_id, price=:price, promotion_price=:promotion_price, manufacture_date=:manufacture_date, expired_date=:expired_date WHERE id = :id";
                     // prepare query for excecution
                     $stmt = $con->prepare($query);
 
                     // bind the parameters
                     $stmt->bindParam(':name', $name);
                     $stmt->bindParam(':description', $description);
+                    $stmt->bindParam(':category_id', $category_id);
                     $stmt->bindParam(':price', $price);
                     $stmt->bindParam(':id', $id);
                     $stmt->bindParam(':promotion_price', $promotionprice);
@@ -193,6 +194,33 @@
                     <td><textarea name='description' class='form-control'><?php echo htmlspecialchars($description, ENT_QUOTES);  ?></textarea></td>
                 </tr>
                 <tr>
+                    <td>Category</td>
+                    <td>
+                        <?php
+                        
+                        $categoryquery = "SELECT category_id as cid, category_name as cname FROM category ORDER BY category_id DESC";
+                        $categorystmt = $con->prepare($categoryquery);
+                        $categorystmt->execute();
+
+                        $numcategory = $categorystmt->rowCount();
+
+                        //check if more than 0 record found
+                        if ($numcategory > 0) {
+                            echo "<form action=" . htmlspecialchars($_SERVER["PHP_SELF"]) . " method='post'>";
+                            echo "<select class='form-select' aria-lable='Default select example' name='category_id'>";
+                            echo "<option value='A' name='A'>Select Category</option>";
+
+                            while ($row = $categorystmt->fetch(PDO::FETCH_ASSOC)) {
+                                extract($row);
+                                echo "<option value='$cid'> $cname";
+                                echo "</option>";
+                            }
+                            echo "</select>";
+                        }
+                        ?>
+                    </td>
+                </tr>
+                <tr>
                     <td>Price</td>
                     <td><input type='text' name='price' value="<?php echo htmlspecialchars($price, ENT_QUOTES);  ?>" class='form-control' /></td>
                 </tr>
@@ -221,6 +249,7 @@
 
     </div>
     <!-- end .container -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </body>
 
 </html>

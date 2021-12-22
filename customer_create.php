@@ -10,8 +10,8 @@
 <body>
 
     <!-- container -->
-    <?php include 'menu.php' ?>
     <div class="container">
+        <?php include 'menu.php' ?>
 
         <div class="page-header">
             <h1>Customer Create</h1>

@@ -28,7 +28,7 @@
         // read current record's data
         try {
             // prepare select query
-            $query = "SELECT id, name, description, price, promotion_price, manufacture_date, expired_date FROM products WHERE id = ? LIMIT 0,1";
+            $query = "SELECT id, name, description, category_name, price, promotion_price, manufacture_date, expired_date FROM products INNER JOIN category ON products.category_id = category.category_id WHERE id = ? LIMIT 0,1";
             $stmt = $con->prepare($query);
 
             // this is the first question mark
@@ -43,6 +43,7 @@
             // values to fill up our form
             $name = $row['name'];
             $description = $row['description'];
+            $category_name = $row['category_name'];
             $price = $row['price'];
             $promotion_price = $row['promotion_price'];
             $manufacture_date = $row['manufacture_date'];
@@ -68,12 +69,16 @@
                 <td><?php echo htmlspecialchars($description, ENT_QUOTES);  ?></td>
             </tr>
             <tr>
+                <td>Category</td>
+                <td><?php echo htmlspecialchars($category_name, ENT_QUOTES);  ?></td>
+            </tr>
+            <tr>
                 <td>Price</td>
-                <td><?php echo htmlspecialchars($price, ENT_QUOTES);  ?></td>
+                <td><?php echo htmlspecialchars($price = number_format($price, 2), ENT_QUOTES);  ?></td>
             </tr>
             <tr>
                 <td>Promotion Price</td>
-                <td><?php echo htmlspecialchars($promotion_price, ENT_QUOTES);  ?></td>
+                <td><?php echo htmlspecialchars($promotion_price = number_format($promotion_price, 2), ENT_QUOTES);  ?></td>
             </tr>
             <tr>
                 <td>Manufacture Date</td>

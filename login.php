@@ -74,18 +74,20 @@
                         if ($row['account_status'] == 1) {
                             //set session variables
                             $_SESSION["username"] = $_POST["username"];
-                            header("location: welcome.php");
-                            exit;
+                            if ($row['account_status'] == 1) {
+                                $_SESSION["username"] = $username;
+                                header("location: welcome.php?username={$username}");
+                                exit;
+                            } else {
+                                echo "<div class='alert alert-danger'>Account unactive.</div>";
+                            }
                         } else {
-                            echo "<div class='alert alert-danger'>Account unactive.</div>";
+                            echo "<div class='alert alert-danger'>Password not match.</div>";
                         }
                     } else {
-                        echo "<div class='alert alert-danger'>Password not match.</div>";
+                        echo "<div class='alert alert-danger'>User not found.</div>";
                     }
-                } else {
-                    echo "<div class='alert alert-danger'>User not found.</div>";
                 }
-
                 // Execute the query
                 if ($stmt->execute()) {
                 }

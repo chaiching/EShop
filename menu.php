@@ -34,12 +34,30 @@
                                 <li><a class="dropdown-item" href="index_product.php">Read Product</a></li>
                             </ul>
                         </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Category
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="create_category.php">Create Category</a></li>
+                                <li><a class="dropdown-item" href="index_category.php">Read Category</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Orders
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="create_order.php">Create Order</a></li>
+                                <li><a class="dropdown-item" href="index_orders.php">Read Order</a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
             </div>
         </div>
     </nav>
-    
+
 </body>
 
 </html>

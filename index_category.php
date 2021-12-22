@@ -13,7 +13,7 @@
     <div class="container">
         <?php include 'menu.php' ?>
         <div class="page-header">
-            <h1>Read Customers</h1>
+            <h1>Read Category</h1>
         </div>
 
         <!-- PHP code to read records will be here -->
@@ -24,15 +24,12 @@
         // delete message prompt will be here
 
         // select all data
-        $query = "SELECT username, email, first_name, last_name, gender, date_of_birth, account_status, register_date_time FROM customers ORDER BY username DESC";
+        $query = "SELECT category_id, category_name FROM category ORDER BY category_id DESC";
         $stmt = $con->prepare($query);
         $stmt->execute();
 
         // this is how to get number of rows returned
         $num = $stmt->rowCount();
-
-        // link to create record form
-        echo "<a href='customer_create.php' class='btn btn-primary m-b-1em'>Customer Create</a>";
 
         $action = isset($_GET['action']) ? $_GET['action'] : "";
 
@@ -49,14 +46,8 @@
 
             //creating our table heading
             echo "<tr>";
-            echo "<th>Username</th>";
-            echo "<th>Email</th>";
-            echo "<th>First Name</th>";
-            echo "<th>Last Name</th>";
-            echo "<th>Gender</th>";
-            echo "<th>Date of Birth</th>";
-            echo "<th>Account Status</th>";
-            echo "<th>Register Date & Time</th>";
+            echo "<th>ID</th>";
+            echo "<th>Name</th>";
             echo "<th>Action</th>";
             echo "</tr>";
 
@@ -68,23 +59,17 @@
                 extract($row);
                 // creating new table row per record
                 echo "<tr>";
-                echo "<td>{$username}</td>";
-                echo "<td>{$email}</td>";
-                echo "<td>{$first_name}</td>";
-                echo "<td>{$last_name}</td>";
-                echo "<td>" . ($gender != 1 ? 'Male' : 'Female') . "</td>";
-                echo "<td>{$date_of_birth}</td>";
-                echo "<td>" . ($account_status != 1 ? 'Unonline' : 'Online') . "</td>";
-                echo "<td>{$register_date_time}</td>";
+                echo "<td>{$category_id}</td>";
+                echo "<td>{$category_name}</td>";
                 echo "<td>";
                 // read one record
-                echo "<a href='read_customer.php?username={$username}' class='btn btn-info m-r-1em'>Read</a>";
+                echo "<a href='read_category.php?category_id={$category_id}' class='btn btn-info m-r-1em'>Read</a>";
 
                 // we will use this links on next part of this post
-                echo "<a href='update_customer.php?username={$username}' class='btn btn-primary m-r-1em'>Edit</a>";
+                echo "<a href='update_category.php?category_id={$category_id}' class='btn btn-primary m-r-1em'>Edit</a>";
 
                 // we will use this links on next part of this post
-                echo "<a onclick='delete_user(\"{$username}\");'  class='btn btn-danger'>Delete</a>";
+                echo "<a onclick='delete_user({$category_id});'  class='btn btn-danger'>Delete</a>";
                 echo "</td>";
                 echo "</tr>";
             }
@@ -107,14 +92,14 @@
     
     <script type='text/javascript'>
         // confirm record deletion
-        function delete_user(username) {
+        function delete_user(category_id) {
 
             var answer = confirm('Are you sure?');
             //if answer == 1
             if (answer) {
                 // if user clicked ok,
                 // pass the id to delete.php and execute the delete query
-                window.location = 'delete_customer.php?id=' + username;
+                window.location = 'delete_category.php?category_id=' + category_id;
             }
         }
     </script>

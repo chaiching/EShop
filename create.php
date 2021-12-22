@@ -1,4 +1,3 @@
-<?php include 'session.php' ?>
 <!DOCTYPE HTML>
 <html>
 
@@ -11,7 +10,10 @@
 <body>
     <!-- container -->
     <div class="container">
-        <?php include 'menu.php' ?>
+        <?php include 'menu.php'; 
+        // include database connection
+        include 'config/database.php';
+        ?>
         <div class="page-header">
             <h1>Create Product</h1>
         </div>
@@ -20,16 +22,17 @@
         <!-- PHP insert code will be here -->
         <?php
         if ($_POST) {
-            // include database connection
-            include 'config/database.php';
             try {
                 // posted values
                 $name = htmlspecialchars(strip_tags($_POST['name']));
                 $description = htmlspecialchars(strip_tags($_POST['description']));
+                $catname = htmlspecialchars(strip_tags($_POST['category_id']));
                 $price = htmlspecialchars(strip_tags($_POST['price']));
                 $promotionprice = htmlspecialchars(strip_tags($_POST['promotion_price']));
                 $manufacturedate = date(strip_tags($_POST['manufacture_date']));
                 $expireddate = date(strip_tags($_POST['expired_date']));
+
+                echo "$catname";
 
                 $flag = 1;
                 $message = "";
@@ -64,13 +67,14 @@
                 if ($flag == 1) {
 
                     // insert query
-                    $query = "INSERT INTO products SET name=:name, description=:description, price=:price, promotion_price=:promotion_price, manufacture_date=:manufacture_date, expired_date=:expired_date";
+                    $query = "INSERT INTO products SET name=:name, description=:description, category_id=:category_id, price=:price, promotion_price=:promotion_price, manufacture_date=:manufacture_date, expired_date=:expired_date";
                     // prepare query for execution
                     $stmt = $con->prepare($query);
 
                     // bind the parameters
                     $stmt->bindParam(':name', $name);
                     $stmt->bindParam(':description', $description);
+                    $stmt->bindParam(':category_id', $catname);
                     $stmt->bindParam(':price', $price);
                     $stmt->bindParam(':promotion_price', $promotionprice);
                     // specify when this record was inserted to the database
@@ -108,6 +112,33 @@
                 <tr>
                     <td>Description</td>
                     <td><textarea name='description' class='form-control'></textarea></td>
+                </tr>
+                <tr>
+                    <td>Category</td>
+                    <td>
+                        <?php
+                        
+                        $categoryquery = "SELECT category_id as cid, category_name as cname FROM category ORDER BY category_id DESC";
+                        $categorystmt = $con->prepare($categoryquery);
+                        $categorystmt->execute();
+
+                        $numcategory = $categorystmt->rowCount();
+
+                        //check if more than 0 record found
+                        if ($numcategory > 0) {
+                            echo "<form action=" . htmlspecialchars($_SERVER["PHP_SELF"]) . " method='post'>";
+                            echo "<select class='form-select' aria-lable='Default select example' name='category_id'>";
+                            echo "<option value='A' name='A'>Select Category</option>";
+
+                            while ($row = $categorystmt->fetch(PDO::FETCH_ASSOC)) {
+                                extract($row);
+                                echo "<option value='$cid'> $cname";
+                                echo "</option>";
+                            }
+                            echo "</select>";
+                        }
+                        ?>
+                    </td>
                 </tr>
                 <tr>
                     <td>Price</td>

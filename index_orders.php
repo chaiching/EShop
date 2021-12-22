@@ -13,7 +13,7 @@
     <div class="container">
         <?php include 'menu.php' ?>
         <div class="page-header">
-            <h1>Read Customers</h1>
+            <h1>Read Orders</h1>
         </div>
 
         <!-- PHP code to read records will be here -->
@@ -21,18 +21,37 @@
         // include database connection
         include 'config/database.php';
 
-        // delete message prompt will be here
-
         // select all data
-        $query = "SELECT username, email, first_name, last_name, gender, date_of_birth, account_status, register_date_time FROM customers ORDER BY username DESC";
-        $stmt = $con->prepare($query);
-        $stmt->execute();
+        $query = "SELECT orders.id as orid, customer_username, order_time FROM orders INNER JOIN customers ON customers.username = orders.customer_username ORDER BY orders.id DESC";
 
-        // this is how to get number of rows returned
+        $customers = "";
+
+        // delete message prompt will be here
+        if ($_POST) {
+            $query = "SELECT orders.id as orid, customer_username, order_time, customers.username, orders.customer_username FROM orders INNER JOIN customers ON customers.username = orders.customer_username WHERE orders.customer_username = ? ORDER BY orders.id DESC";
+
+            $customers = htmlspecialchars(strip_tags($_POST['customers']));
+
+            if ($customers == "A") {
+                $query = "SELECT orders.id as orid, customer_username, order_time, customers.username, orders.customer_username FROM orders INNER JOIN customers ON customers.username = orders.customer_username ORDER BY orders.id DESC";
+            }
+        }
+
+        $stmt = $con->prepare($query);
+        if ($_POST && $customers !== "A") {
+            $stmt->bindParam(1, $customers);
+        }
+        $stmt->execute();
         $num = $stmt->rowCount();
 
         // link to create record form
-        echo "<a href='customer_create.php' class='btn btn-primary m-b-1em'>Customer Create</a>";
+        echo "<a href='create_order.php' class='btn btn-primary m-b-1em'>Create Order</a>";
+        ?>
+
+        <?php
+        $customerquery = "SELECT username FROM customers ORDER BY username DESC";
+        $customerstmt = $con->prepare($customerquery);
+        $customerstmt->execute();
 
         $action = isset($_GET['action']) ? $_GET['action'] : "";
 
@@ -41,22 +60,18 @@
             echo "<div class='alert alert-success'>Record was deleted.</div>";
         }
 
-        //check if more than 0 record found
-        if ($num > 0) {
+        ?>
 
+        <?php
+        if ($num > 0) {
             // data from database will be here
             echo "<table class='table table-hover table-responsive table-bordered'>"; //start table
 
             //creating our table heading
             echo "<tr>";
-            echo "<th>Username</th>";
-            echo "<th>Email</th>";
-            echo "<th>First Name</th>";
-            echo "<th>Last Name</th>";
-            echo "<th>Gender</th>";
-            echo "<th>Date of Birth</th>";
-            echo "<th>Account Status</th>";
-            echo "<th>Register Date & Time</th>";
+            echo "<th>ID</th>";
+            echo "<th>Customer Username</th>";
+            echo "<th>Order Time</th>";
             echo "<th>Action</th>";
             echo "</tr>";
 
@@ -68,53 +83,50 @@
                 extract($row);
                 // creating new table row per record
                 echo "<tr>";
-                echo "<td>{$username}</td>";
-                echo "<td>{$email}</td>";
-                echo "<td>{$first_name}</td>";
-                echo "<td>{$last_name}</td>";
-                echo "<td>" . ($gender != 1 ? 'Male' : 'Female') . "</td>";
-                echo "<td>{$date_of_birth}</td>";
-                echo "<td>" . ($account_status != 1 ? 'Unonline' : 'Online') . "</td>";
-                echo "<td>{$register_date_time}</td>";
+                echo "<td>{$orid}</td>";
+                echo "<td>{$customer_username}</td>";
+                echo "<td>{$order_time}</td>";
                 echo "<td>";
                 // read one record
-                echo "<a href='read_customer.php?username={$username}' class='btn btn-info m-r-1em'>Read</a>";
+                echo "<a href='read_order.php?id={$orid}' class='btn btn-info m-r-1em'>Read</a>";
 
                 // we will use this links on next part of this post
-                echo "<a href='update_customer.php?username={$username}' class='btn btn-primary m-r-1em'>Edit</a>";
+                echo "<a href='update_order.php?id={$orid}' class='btn btn-primary m-r-1em'>Edit</a>";
 
                 // we will use this links on next part of this post
-                echo "<a onclick='delete_user(\"{$username}\");'  class='btn btn-danger'>Delete</a>";
+                echo "<a onclick='delete_user({$orid});'  class='btn btn-danger'>Delete</a>";
                 echo "</td>";
                 echo "</tr>";
             }
 
-
             // end table
             echo "</table>";
         }
+
         // if no records found
         else {
             echo "<div class='alert alert-danger'>No records found.</div>";
         }
+
         ?>
 
 
     </div> <!-- end .container -->
 
     <!-- confirm delete record will be here -->
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-    
+
     <script type='text/javascript'>
         // confirm record deletion
-        function delete_user(username) {
+        function delete_user(order_id) {
 
             var answer = confirm('Are you sure?');
             //if answer == 1
             if (answer) {
                 // if user clicked ok,
                 // pass the id to delete.php and execute the delete query
-                window.location = 'delete_customer.php?id=' + username;
+                window.location = 'delete_order.php?order_id=' + order_id;
             }
         }
     </script>
