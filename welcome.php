@@ -18,7 +18,6 @@
             <h1>Welcome</h1>
 
             <?php
-            include 'config/database.php';
             echo "<div class='text-center'>";
             echo "Today Date: ";
             echo date("M j, Y");
@@ -43,10 +42,6 @@
             };
             echo $last_name;
             echo "</div"
-            ?>
-
-            <?php
-            include 'config/database.php';
             ?>
 
             <div class="container px-4">
@@ -106,19 +101,11 @@
                     <p class="fw-bold text-uppercase">Top Sell Product</p>
 
                     <?php
-                    $query = "SELECT product_id, SUM(quantity) As MostSold FROM orderdetails Group By product_id ORDER BY MostSold  DESC limit 3";
+                    $query = "SELECT product_id, SUM(quantity) As MostSold FROM orderdetails GROUP BY product_id ORDER BY MostSold  DESC limit 3";
                     $stmt = $con->prepare($query);
                     $stmt->execute();
                     $num = $stmt->rowCount();
                     echo $num;
-
-                    // $query = "SELECT top 5 product_id, SUM(quantity) as most3sold FROM orderdetails Group By product_id ORDER BY most3sold  DESC";
-                    // $stmt = $con->prepare($query);
-                    // $stmt->execute();
-                    // $num = $stmt->rowCount();
-                    // echo $num;
-                    //select Item_code, Quantity from customer_invoice order by Quantity desc limit 5
-
 
                     ?>
                 </div>
