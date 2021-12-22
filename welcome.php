@@ -128,12 +128,14 @@
                     }
 
                     if (isset($order_time)) {
-                        $query = "SELECT order_id, orderdetails.order_id as oname, orderdetails_id, orders.id, product_id, quantity, max(order_time) as MaxDate, products.price as pprice, products.id as pid, products.name as pname FROM orderdetails INNER JOIN products ON orderdetails.product_id = products.id INNER JOIN orders ON orderdetails.order_id = orders.id WHERE orderdetails.order_id = ?";
+                        $query = "SELECT order_id, orderdetails.order_id as oname, orderdetails_id, orders.id, product_id, quantity, max(order_time) as MaxDate, products.price as pprice, products.id as pid, products.name as pname FROM orderdetails INNER JOIN products ON orderdetails.product_id = products.id WHERE orderdetails.order_id = ?";
                         $stmt = $con->prepare($query);
                         $stmt->bindParam(1, $order_time);
                         $stmt->execute();
                         $row = $stmt->fetch(PDO::FETCH_ASSOC);
                         var_dump($row);
+
+                        $query = "SELECT order_id, orderdetails.order_id as oname, orderdetails_id, orders.id, product_id, quantity, max(order_time) as MaxDate, products.price as pprice, products.id as pid, products.name as pname FROM orderdetails INNER JOIN orders ON orderdetails.order_id = orders.id WHERE orderdetails.order_id = ?";
 
                         // values to fill up our form
                         $order_id = $row['order_id'];
